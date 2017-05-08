@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 
@@ -27,17 +28,25 @@ public class Client {
 	static InetSocketAddress local;
 	static InetSocketAddress serverSocket;
 
+	static ReentrantLock lock;
 	
-	Client(String n, String ip, int port) throws IOException{
-		name = n;
-		ip = ip_server;
-		port_server = port;
+	VisualMain MainGUI;
+	
+	Client() throws IOException{//String n, String ip, int port
+		//name = n;
+		//ip = ip_server;
+		//port_server = port;
 		to_send = new LinkedBlockingQueue<Message>();
 		reception = new LinkedBlockingQueue<String>();
+		
+		local = new InetSocketAddress(30010);
 		mySocket = DatagramChannel.open();
 		mySocket.bind(local);
-		serverSocket = new InetSocketAddress(ip_server,port_server);
+		
 		contacts = new HashSet<String>();
+		lock = new ReentrantLock();
+		
+		MainGUI = new VisualMain();
 	}
 	
 
@@ -66,46 +75,23 @@ public class Client {
 	}
 	
 	
-	void msg_analiser() throws InterruptedException, UnsupportedEncodingException{
-		
-		String msg;
-		
-		while(true){
-			
-			msg = reception.take();
-			
-			if (msg.charAt(0) == 'F'){
-				
-			}
-			
-			if (msg.charAt(0) == 'M'){
-				
-			}
-			
-			if (msg.charAt(0) == 'C'){
-				
-				int i,j,k;
-				i = msg.indexOf("#", 2);
-				connection_from(msg.substring(2, i));
-			}
-			
-			if (msg.charAt(0) == 'c'){
-				//start thread...
-			}
-			
-		}
-
-	}; 
 	
 	
-	void authentification() throws UnsupportedEncodingException{
+	void authentification() throws UnsupportedEncodingException, InterruptedException{
 		
+		serverSocket = new InetSocketAddress(ip_server,port_server);
 		String s = "A#" + name + "#server#" ;
 		ByteBuffer bf = ByteBuffer.allocate(1200);
 		bf.put(s.getBytes("UTF-16be"));
 		bf.flip();
 		Message m = new Message(name, "server", bf);
 		to_send.add(m);
+		
+		MainGUI.textField.setText("Connecting to server...");
+		
+		lock.lock();
+		while(lock.isLocked())
+			Thread.sleep(1000);
 	};
 	
 	void connection_from(String n) throws UnsupportedEncodingException{
@@ -142,6 +128,20 @@ public class Client {
 	
 	void log_out(){};
 	
-	
-	
+//	public static void main(String args[]) throws IOException{
+//		
+//		Client client = new Client();
+//
+//		client.MainGUI.pack();
+//		client.MainGUI.setVisible(true);
+//		client.MainGUI.setSize(500,500);
+//		client.MainGUI.textField.setText("Please enter your name, server's IP and port");
+//		//client.MainGUI.setResizable(false);
+//		
+//		
+//
+//		
+//	}
 }
+	
+

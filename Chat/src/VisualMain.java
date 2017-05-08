@@ -1,4 +1,9 @@
+import java.awt.Button;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.TextField;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -15,55 +20,48 @@ public class VisualMain extends JFrame {
 	private static final long serialVersionUID = 1L;
 	Client client;
 	String userWord = "";
-	JTextField userInput = new JTextField(10);
-	JButton submit = new JButton("Submit name");
-	
-	JTextField userInput1 = new JTextField(10);
-	JButton submit1= new JButton("Connect to");
-	
-    JTextField textField;
-	
+	TextField userInput = new TextField(10);
+	TextField userInput1 = new TextField(10);
+	Button submit = new Button("Submit name");
+	Button submit1= new Button("Connect to");
+    TextField textField = new TextField();
+    Button myButton = new Button("OK");
+    
+    
     public VisualMain() {
-    	super("Chat**Main");
-    	
-    	JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
-    	textField = new JTextField();
-        textField. setColumns(23);
-        centerPanel.add(textField);
+
+
+//        ...//In the main method:
+//        Insets insets = frame.getInsets();
+//        frame.setSize(300 + insets.left + insets.right,
+//                      125 + insets.top + insets.bottom);
+//        //myButton.setLocation(50,50);
+//        //myButton.setSize(50,50);
+//        //panel.add(myButton);
+
         
-        
-        
-        setSize(WIDTH, HEIGHT);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // This center the window on the screen
-        submit.addActionListener( (e)-> {
-            submitAction();
-        });
-        centerPanel.add(userInput);
-        JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        southPanel.add(submit);
-        Box theBox = Box.createVerticalBox();
-        theBox.add(Box.createVerticalStrut(100));
-        theBox.add(centerPanel);
-        theBox.add(Box.createVerticalStrut(200));
-        theBox.add(southPanel);
-        add(theBox);
-        
-        submit1.addActionListener( (e)-> {
-            submitAction1();
-        });
-        centerPanel.add(userInput1);
-        JPanel southPanel1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        southPanel.add(submit1);
-        Box theBox1 = Box.createVerticalBox();
-        theBox1.add(Box.createVerticalStrut(10));
-        theBox1.add(centerPanel);
-        theBox1.add(Box.createVerticalStrut(20));
-        theBox1.add(southPanel);
-        add(theBox1);
+
+
+//    	textField.setLocation(25, 50);
+//    	textField.setSize(30, 40);
+       
+//        
+//        submit.addActionListener( (e)-> {
+//            submitAction();
+//        });
+//        
+//        centerPanel.add(userInput);
+        //submit.setLo (30,30,30,30);
+        //submit.setLayout(null);
+
+        //centerPanel.add(submit);
+//        submit1.addActionListener( (e)-> {
+//            submitAction1();
+//        });
+//        centerPanel.add(userInput1);
+//        centerPanel.add(submit1);
+
     }
-    
-    
 	
     private void submitAction() {
         // You can do some validation here before assign the text to the variable 
@@ -77,12 +75,12 @@ public class VisualMain extends JFrame {
         System.out.println(userWord);
     }
 
-    public static void main(String args[]){
-   	
-    	VisualMain m = new VisualMain();
-
-    	m.pack();
-    	m.setLocationRelativeTo(null);
-    	m.setVisible(true);
-   }
+//    public static void main(String args[]){
+//   	
+//    	VisualMain m = new VisualMain();
+//
+//    	m.pack();
+//    	m.setLocationRelativeTo(null);
+//    	m.setVisible(true);
+//   }
 }
