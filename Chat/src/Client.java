@@ -30,7 +30,7 @@ public class Client {
 
 	static ReentrantLock lock;
 	
-	VisualMain MainGUI;
+	
 	
 	Client() throws IOException{//String n, String ip, int port
 		//name = n;
@@ -39,14 +39,14 @@ public class Client {
 		to_send = new LinkedBlockingQueue<Message>();
 		reception = new LinkedBlockingQueue<String>();
 		
-		local = new InetSocketAddress(30010);
+		local = new InetSocketAddress(30014);
 		mySocket = DatagramChannel.open();
 		mySocket.bind(local);
 		
 		contacts = new HashSet<String>();
 		lock = new ReentrantLock();
 		
-		MainGUI = new VisualMain();
+
 	}
 	
 
@@ -59,8 +59,10 @@ public class Client {
 		while(true){
 			mySocket.receive(bbuf);
 			bbuf.flip();
-			str = StandardCharsets.UTF_8.decode(bbuf.duplicate()).toString();
+			str = StandardCharsets.UTF_16BE.decode(bbuf.duplicate()).toString();
+			System.out.println(str);
 			reception.put(str);
+			//Test.msg_analiser();
 			bbuf.clear();
 		}
 	}
@@ -68,9 +70,16 @@ public class Client {
 	static void sender() throws InterruptedException, IOException {
 		
 		while(true){
+			while(to_send.isEmpty())
+				Thread.sleep(1000);
 			Message msg = to_send.take();
-			msg.bbuf.flip();
-			mySocket.send(msg.bbuf, serverSocket);
+			
+			//msg.bbuf.flip();
+			//System.out.println("we send this");
+			//System.out.println(StandardCharsets.UTF_16BE.decode(msg.bbuf.duplicate()).toString());
+			mySocket.send(msg.bbuf.duplicate(), serverSocket);
+			
+			//System.out.println(msg.bbuf);
 		}
 	}
 	
@@ -80,18 +89,23 @@ public class Client {
 	void authentification() throws UnsupportedEncodingException, InterruptedException{
 		
 		serverSocket = new InetSocketAddress(ip_server,port_server);
-		String s = "A#" + name + "#server#" ;
+		String s = new String("A#" + name + "#server#") ;
 		ByteBuffer bf = ByteBuffer.allocate(1200);
+		System.out.println("This is my string: " + s);
 		bf.put(s.getBytes("UTF-16be"));
+		System.out.println(bf.toString());
 		bf.flip();
-		Message m = new Message(name, "server", bf);
+		System.out.println(bf.toString());
+		System.out.println("We put : " + bf.position());
+		Message m = new Message(name, "server", bf.duplicate());
+		System.out.println("this is my message" + m.bbuf.toString());
 		to_send.add(m);
 		
-		MainGUI.textField.setText("Connecting to server...");
+		//MainGUI.textField.setText("Connecting to server...");
 		
-		lock.lock();
-		while(lock.isLocked())
-			Thread.sleep(1000);
+		//lock.lock();
+		//while(lock.isLocked())
+		//	Thread.sleep(1000);
 	};
 	
 	void connection_from(String n) throws UnsupportedEncodingException{

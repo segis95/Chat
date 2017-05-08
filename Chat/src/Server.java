@@ -19,14 +19,19 @@ public class Server {
 	static Map<String, SocketAddress> clients;
 		
 	static BlockingQueue<Message> to_send;
-	static BlockingQueue<String> reception;
+	//static BlockingQueue<String> reception;
 	
 	static void sender() throws IOException, InterruptedException{
 		
 		while(true){
+			while(to_send.isEmpty())
+				Thread.sleep(100);
 			Message msg = to_send.take();
-			msg.bbuf.flip();
+			//msg.bbuf.flip();
+			System.out.println("we send this:");
+			System.out.println(StandardCharsets.UTF_16BE.decode(msg.bbuf.duplicate()).toString());
 			mySocket.send(msg.bbuf, clients.get(msg.to));
+			System.out.println("sent");
 		}
 		
 		
@@ -42,8 +47,9 @@ public class Server {
 			
 			SocketAddress client_from = mySocket.receive(bbuf);
 			bbuf.flip();
-			str = StandardCharsets.UTF_8.decode(bbuf.duplicate()).toString();
-			
+			str = StandardCharsets.UTF_16BE.decode(bbuf.duplicate()).toString();
+			System.out.println("Recieved");
+			System.out.println(str);
 			//reception.put(str);
 			bbuf.clear();
 			
@@ -61,7 +67,7 @@ public class Server {
 		//System.out.println(local.toString());
 		mySocket.socket().setBroadcast(true);
 		to_send = new LinkedBlockingQueue<Message>();
-		reception = new LinkedBlockingQueue<String>();
+		//reception = new LinkedBlockingQueue<String>();
 		
 	}
 	
@@ -78,28 +84,28 @@ public class Server {
 		
 	
 		
-		msg = reception.take();
+		//msg = reception.take();
 		
-		if (msg.charAt(0) == 'F'){
+		if (msg.length() > 0 && msg.charAt(0) == 'F'){
 			
 		}
 		
-		if (msg.charAt(0) == 'M'){
+		if (msg.length() > 0 && msg.charAt(0) == 'M'){
 			
 		}
 		
-		if (msg.charAt(0) == 'C'){
+		if (msg.length() > 0 && msg.charAt(0) == 'C'){
 			
 			int i,j,k;
 			i = msg.indexOf("#", 2);
 			//connection_from(msg.substring(2, i));
 		}
 		
-		if (msg.charAt(0) == 'c'){
+		if (msg.length() > 0 && msg.charAt(0) == 'c'){
 			//start thread...
 		}
 		
-		if (msg.charAt(0) == 'A'){
+		if (msg.length() > 0 && msg.charAt(0) == 'A'){
 			int i = msg.indexOf("#", 2);
 			String fr = msg.substring(2, i);
 			

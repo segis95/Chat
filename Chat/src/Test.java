@@ -103,12 +103,15 @@ public class Test {
         
     }
     
-	void msg_analiser() throws InterruptedException, UnsupportedEncodingException{
+	static void msg_analiser() throws InterruptedException, UnsupportedEncodingException{
 		
 		String msg;
 		
 		while(true){
 			
+			//System.out.println(client.reception);
+			while(client.reception.isEmpty())
+				Thread.sleep(1000);
 			msg = client.reception.take();
 			
 			if (msg.charAt(0) == 'F'){
@@ -131,7 +134,7 @@ public class Test {
 			}
 			
 			if (msg.charAt(0) == 'a'){
-				client.lock.unlock();
+				//client.lock.unlock();
 				comm.setText("You are now connected to the server...");
 			}
 			
@@ -155,7 +158,41 @@ public class Test {
             	client.name = n;
             	client.port_server = Integer.parseInt(p);
             	client.ip_server = ip;
+            	
             	comm.setText("Connecting to server...");
+            	
+            	Thread t1 = new Thread(() -> {
+        			try {
+        				Client.reciever();
+        			} catch (IOException | InterruptedException e1) {
+        				// TODO Auto-generated catch block
+        				e1.printStackTrace();
+        			}
+        		});
+            	t1.start();
+            	
+            	Thread t2 = new Thread(() -> {
+        			try {
+        				Client.sender();
+        			} catch (InterruptedException | IOException e1) {
+        				// TODO Auto-generated catch block
+        				e1.printStackTrace();
+        			}
+        		});
+            	
+            	t2.start();
+            	
+            	Thread t3 = new Thread(() -> {
+        			try {
+        				msg_analiser();
+        			} catch (UnsupportedEncodingException | InterruptedException e1) {
+        				// TODO Auto-generated catch block
+        				e1.printStackTrace();
+        			}
+        		});
+            	t3.start();
+            	//client.lock.lock();
+            	
             	try {
 					client.authentification();
 				} catch (UnsupportedEncodingException | InterruptedException e1) {
@@ -213,10 +250,9 @@ public class Test {
 				e.printStackTrace();
 			}
 		});
-    	t.run();
+    	t.start();
     	
-    	
-    	
+
     	
 //        javax.swing.SwingUtilities.invokeLater(new Runnable() {
 //            public void run() {
