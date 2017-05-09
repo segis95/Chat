@@ -60,6 +60,7 @@ public class Client {
 			mySocket.receive(bbuf);
 			bbuf.flip();
 			str = StandardCharsets.UTF_16BE.decode(bbuf.duplicate()).toString();
+			System.out.println("Recieve this");
 			System.out.println(str);
 			reception.put(str);
 			//Test.msg_analiser();
@@ -91,14 +92,14 @@ public class Client {
 		serverSocket = new InetSocketAddress(ip_server,port_server);
 		String s = new String("A#" + name + "#server#") ;
 		ByteBuffer bf = ByteBuffer.allocate(1200);
-		System.out.println("This is my string: " + s);
+		//System.out.println("This is my string: " + s);
 		bf.put(s.getBytes("UTF-16be"));
-		System.out.println(bf.toString());
+		//System.out.println(bf.toString());
 		bf.flip();
-		System.out.println(bf.toString());
-		System.out.println("We put : " + bf.position());
+		//System.out.println(bf.toString());
+		//System.out.println("We put : " + bf.position());
 		Message m = new Message(name, "server", bf.duplicate());
-		System.out.println("this is my message" + m.bbuf.toString());
+		//System.out.println("this is my message" + m.bbuf.toString());
 		to_send.add(m);
 		
 		//MainGUI.textField.setText("Connecting to server...");
@@ -117,7 +118,7 @@ public class Client {
 			String s = "c#" + name + "#" + n + "#" ;
 			ByteBuffer bf = ByteBuffer.allocate(1200);
 			bf.put(s.getBytes("UTF-16be"));
-			//bf.flip();
+			bf.flip();
 			Message m = new Message(name, n, bf.duplicate());
 			to_send.add(m);
 			
@@ -125,13 +126,38 @@ public class Client {
 		
 	}
 	
-
+	void connection_from_me(String n) throws UnsupportedEncodingException{
+		if (contacts.contains(n)){
+			//Thread.currentThread().interrupt();
+		}
+		else{
+			
+			String s = "C#" + name + "#" + n + "#" ;
+			ByteBuffer bf = ByteBuffer.allocate(1200);
+			bf.put(s.getBytes("UTF-16be"));
+			bf.flip();
+			Message m = new Message(name, n, bf.duplicate());
+			to_send.add(m);
+		}
+		
+	}
 	
 	void send_file(String nm, String file_name){}
 	
 	void recieve_file(String save_to){};
 	
-	static void send_msg(String msg){};
+	static void send_msg(String msg) throws UnsupportedEncodingException, InterruptedException{
+		
+		int i;
+		i = msg.indexOf("#", 1);
+		String to = msg.substring(1, i);
+		String s = "M#" + name + msg;
+		ByteBuffer bf = ByteBuffer.allocate(1200);
+		bf.put(s.getBytes("UTF-16be"));
+		bf.flip();
+		Message mm = new Message(name, to, bf.duplicate() );
+		to_send.put(mm);
+	};
 	
 	void log_out(){};
 	

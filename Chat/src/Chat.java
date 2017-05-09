@@ -4,9 +4,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -18,7 +20,7 @@ public class Chat extends Thread {
 	JTextPane text;
 	JButton enter;
 	
-	
+	JScrollPane sp; 
 	Chat(String n){
 		name = n;
 		
@@ -31,26 +33,37 @@ public class Chat extends Thread {
 		 text = new JTextPane();
 		 enter = new JButton("Enter");
 		 
+		 JScrollPane sp = new JScrollPane(text);
+		 
+		 pane.add( sp );
 		 pane.add(write);
 		 pane.add(text);
 		 pane.add(enter);
 		 
 		 Insets insets = pane.getInsets();
 	        
-        Dimension size = write.getPreferredSize();
-        write.setBounds( 10 + insets.left,  insets.top,
+        Dimension size = text.getPreferredSize();
+        text.setBounds( 10 + insets.left,  insets.top,
                      size.width + 300, size.height + 300);
+        
+        size = sp.getPreferredSize();
+        sp.setBounds(350 +  insets.left, insets.top + 20,
+                     size.width + 10 , size.height + 290);
+        
+        //sp. getVerticalScrollBar();
+        
         
         
         size = enter.getPreferredSize();
         enter.setBounds(330 +  insets.left, 320 + insets.top,
                      size.width , size.height);
         
-        size = text.getPreferredSize();
-        text.setBounds( 10 + insets.left, 320 + insets.top,
+        size = write.getPreferredSize();
+        write.setBounds( 10 + insets.left, 320 + insets.top,
                      size.width + 300, size.height + 20);
 	 
         enter.setActionCommand("submit");
+        enter.addActionListener(new MyAction(this));
 	 }
 		 
 	 public class  MyAction implements ActionListener 
@@ -65,11 +78,16 @@ public class Chat extends Thread {
 	            String c = e.getActionCommand();
 	            if (c == "submit")
 	            {
-	            	String s = "" ;
-	            	ch.write.setText(s);
-	            	s = ch.text.getText();
-	            	ch.text.setText(s + '\n' + "Me: ");
-	            	Client.send_msg("asd");
+	            	String s = ch.write.getText() ;
+	            	ch.write.setText("");
+	            	String ss = ch.text.getText();
+	            	ch.text.setText(ss + '\n' + "Me: " + s);
+	            	try {
+						Client.send_msg("#" + name + "#" + s);
+					} catch (UnsupportedEncodingException | InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 	            }
 	    	}
 	    }
@@ -79,7 +97,7 @@ public class Chat extends Thread {
 	    	
 		 	
 	        JFrame frame = new JFrame("Chat : " + this.name);
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE );//EXIT_ON_CLOSE
 	 
 	        //Set up the content pane.
 	        addComponentsToPane(frame.getContentPane());

@@ -128,6 +128,7 @@ public class Test {
         submit_authorisation.setActionCommand("submit");
         bperson.setActionCommand("submit1");
         submit_authorisation.addActionListener(new MyAction());
+        bperson.addActionListener(new MyAction());
         
     }
     
@@ -247,6 +248,20 @@ public class Test {
             }
             else if (c == "submit1")
             {
+            	
+            	String s = tperson.getText();
+            	tperson.setText("");
+            	try {
+					client.connection_from_me(s);
+				} catch (UnsupportedEncodingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+            	
+            	Chat ch = new Chat(s);
+            	chats.put(s, ch);
+            	ch.run();
+            	
             	//s += c;
             	//textField.setText(calculator.castSS(s));
             	//s = "";

@@ -28,7 +28,11 @@ public class Server {
 				Thread.sleep(100);
 			Message msg = to_send.take();
 			//msg.bbuf.flip();
-
+			
+			String str = StandardCharsets.UTF_16BE.decode(msg.bbuf.duplicate()).toString();
+			System.out.println("send this");
+			System.out.println(str);
+			
 			mySocket.send(msg.bbuf, clients.get(msg.to));
 			
 		}
@@ -48,6 +52,8 @@ public class Server {
 			bbuf.flip();
 			str = StandardCharsets.UTF_16BE.decode(bbuf.duplicate()).toString();
 
+			//System.out.println("Recieve this");
+			//System.out.println(str);
 			//reception.put(str);
 			bbuf.clear();
 			
@@ -90,17 +96,55 @@ public class Server {
 		
 		if (msg.length() > 0 && msg.charAt(0) == 'M'){
 			
+			int i,j,k;
+			i = msg.indexOf("#", 2);
+			j = msg.indexOf("#", i + 1);
+			
+			String s = msg.substring(i + 1, j);
+			
+			if (clients.containsKey(s)){
+				ByteBuffer bf = ByteBuffer.allocate(1200);
+				bf.put(s.getBytes("UTF-16be"));
+				bf.flip();
+				Message ms = new Message(msg.substring(2, i), s, bf.duplicate());
+				to_send.add(ms);
+			}
+			
 		}
 		
 		if (msg.length() > 0 && msg.charAt(0) == 'C'){
 			
 			int i,j,k;
 			i = msg.indexOf("#", 2);
+			j = msg.indexOf("#", i + 1);
+			
+			String s = msg.substring(i + 1, j);
+			
+			if (clients.containsKey(s)){
+				ByteBuffer bf = ByteBuffer.allocate(1200);
+				bf.put(s.getBytes("UTF-16be"));
+				bf.flip();
+				Message ms = new Message(msg.substring(2, i), s, bf.duplicate());
+				to_send.add(ms);
+			}
 			//connection_from(msg.substring(2, i));
 		}
 		
 		if (msg.length() > 0 && msg.charAt(0) == 'c'){
-			//start thread...
+			
+			int i,j,k;
+			i = msg.indexOf("#", 2);
+			j = msg.indexOf("#", i + 1);
+			
+			String s = msg.substring(i + 1, j);
+			
+			if (clients.containsKey(s)){
+				ByteBuffer bf = ByteBuffer.allocate(1200);
+				bf.put(s.getBytes("UTF-16be"));
+				bf.flip();
+				Message ms = new Message(msg.substring(2, i), s, bf.duplicate());
+				to_send.add(ms);
+			}
 		}
 		
 		if (msg.length() > 0 && msg.charAt(0) == 'A'){
