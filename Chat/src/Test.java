@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,13 +33,19 @@ public class Test {
 	static JTextField tip;
 	static JTextField tport;
 	
+	static JTextField tperson;
+	static JLabel lperson;
+	static JButton bperson;
 	
 	static JButton submit_authorisation;
 	
 	static Client client;
 	
+	static Map<String, Chat> chats = new HashMap<String, Chat>();
+	
 	
     public static void addComponentsToPane(Container pane) {
+    	
         pane.setLayout(null);
  
         comm = new JLabel("Please enter you name and address of server...");
@@ -49,7 +57,11 @@ public class Test {
         tname = new JTextField();
         tip = new JTextField();
         tport = new JTextField();
-
+        
+        
+    	tperson = new JTextField();
+    	lperson = new JLabel("");
+    	bperson = new JButton("submit");
     	
         submit_authorisation = new JButton("Submit");
         
@@ -63,10 +75,25 @@ public class Test {
         pane.add(tname);
         pane.add(tip);
         pane.add(tport);
+        pane.add(lperson);
+        pane.add(bperson);
+        pane.add(tperson);
         
         Insets insets = pane.getInsets();
         
-        Dimension size = comm.getPreferredSize();
+        Dimension size = lperson.getPreferredSize();
+        lperson.setBounds( 30 + insets.left, 200 + insets.top,
+                     size.width + 200, size.height + 20);
+        
+        size = tperson.getPreferredSize();
+        tperson.setBounds(10 + insets.left, 230 + insets.top,
+                     size.width + 100 , size.height );
+        
+        size = bperson.getPreferredSize();
+        bperson.setBounds(120 + insets.left, 230 + insets.top,
+                     size.width + 50 , size.height );
+        
+        size = comm.getPreferredSize();
         comm.setBounds(30 + insets.left, 10 + insets.top,
                      size.width + 20, size.height + 20);
         
@@ -99,6 +126,7 @@ public class Test {
                      size.width + 80, size.height );
         
         submit_authorisation.setActionCommand("submit");
+        bperson.setActionCommand("submit1");
         submit_authorisation.addActionListener(new MyAction());
         
     }
@@ -111,7 +139,7 @@ public class Test {
 			
 			//System.out.println(client.reception);
 			while(client.reception.isEmpty())
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			msg = client.reception.take();
 			
 			if (msg.charAt(0) == 'F'){
@@ -119,6 +147,14 @@ public class Test {
 			}
 			
 			if (msg.charAt(0) == 'M'){
+				int i = msg.indexOf("#", 2);
+				int j = msg.indexOf("#", i + 1);
+				String txt = msg.substring(j + 1);
+				
+				String s = msg.substring(2, i);
+				
+				String ss = chats.get(s).text.getText();
+				chats.get(s).text.setText(ss + "\n" + s + ": " + txt);
 				
 			}
 			
@@ -126,16 +162,23 @@ public class Test {
 				
 				int i,j,k;
 				i = msg.indexOf("#", 2);
-				client.connection_from(msg.substring(2, i));
+				client.connection_to(msg.substring(2, i));
 			}
 			
 			if (msg.charAt(0) == 'c'){
-				//start thread...
+				int i = msg.indexOf("#", 2);
+				String s = msg.substring(2, i);
+				if (!chats.containsKey(s)){
+					Chat ch = new Chat(s);
+					chats.put(s, ch);
+				}
+				
 			}
 			
 			if (msg.charAt(0) == 'a'){
 				//client.lock.unlock();
 				comm.setText("You are now connected to the server...");
+				lperson.setText("Please choose your contacts...");
 			}
 			
 		}
@@ -149,11 +192,11 @@ public class Test {
             if (c == "submit")
             {
             	String n = tname.getText();
-            	tname.setText("");
+            	//tname.setText("");
             	String ip = tip.getText();
-            	tip.setText("");
+            	//tip.setText("");
             	String p = tport.getText();
-            	tport.setText("");
+            	//tport.setText("");
             	
             	client.name = n;
             	client.port_server = Integer.parseInt(p);
@@ -200,8 +243,9 @@ public class Test {
 				}
             	
             	
+            	
             }
-            else if (c == "=")
+            else if (c == "submit1")
             {
             	//s += c;
             	//textField.setText(calculator.castSS(s));
@@ -224,8 +268,8 @@ public class Test {
     private static void createAndShowGUI() throws IOException {
         //Create and set up the window.
     	client = new Client();
-    	System.out.println(client.local.toString());
-        JFrame frame = new JFrame("AbsoluteLayoutDemo");
+ 
+        JFrame frame = new JFrame("HappyNewChat!!!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  
         //Set up the content pane.

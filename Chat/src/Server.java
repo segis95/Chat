@@ -28,10 +28,9 @@ public class Server {
 				Thread.sleep(100);
 			Message msg = to_send.take();
 			//msg.bbuf.flip();
-			System.out.println("we send this:");
-			System.out.println(StandardCharsets.UTF_16BE.decode(msg.bbuf.duplicate()).toString());
+
 			mySocket.send(msg.bbuf, clients.get(msg.to));
-			System.out.println("sent");
+			
 		}
 		
 		
@@ -48,8 +47,7 @@ public class Server {
 			SocketAddress client_from = mySocket.receive(bbuf);
 			bbuf.flip();
 			str = StandardCharsets.UTF_16BE.decode(bbuf.duplicate()).toString();
-			System.out.println("Recieved");
-			System.out.println(str);
+
 			//reception.put(str);
 			bbuf.clear();
 			

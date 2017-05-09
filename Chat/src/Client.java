@@ -108,7 +108,7 @@ public class Client {
 		//	Thread.sleep(1000);
 	};
 	
-	void connection_from(String n) throws UnsupportedEncodingException{
+	void connection_to(String n) throws UnsupportedEncodingException{
 		if (contacts.contains(n)){
 			//Thread.currentThread().interrupt();
 		}
@@ -117,28 +117,21 @@ public class Client {
 			String s = "c#" + name + "#" + n + "#" ;
 			ByteBuffer bf = ByteBuffer.allocate(1200);
 			bf.put(s.getBytes("UTF-16be"));
-			bf.flip();
-			Message m = new Message(name, n, bf);
+			//bf.flip();
+			Message m = new Message(name, n, bf.duplicate());
 			to_send.add(m);
 			
 		}
 		
 	}
 	
-	void connection_to(String n){
-		if (contacts.contains(n)){
-			
-		}
-		else{
 
-		}
-	};
 	
 	void send_file(String nm, String file_name){}
 	
 	void recieve_file(String save_to){};
 	
-	void send_msg(String msg){};
+	static void send_msg(String msg){};
 	
 	void log_out(){};
 	
