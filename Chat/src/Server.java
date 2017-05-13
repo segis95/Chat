@@ -122,7 +122,7 @@ public class Server {
 			
 			if (clients.containsKey(s)){
 				ByteBuffer bf = ByteBuffer.allocate(1200);
-				bf.put(s.getBytes("UTF-16be"));
+				bf.put(msg.getBytes("UTF-16be"));
 				bf.flip();
 				Message ms = new Message(msg.substring(2, i), s, bf.duplicate());
 				to_send.add(ms);

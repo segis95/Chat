@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -98,6 +99,21 @@ public class Chat extends Thread {
 		 	
 	        JFrame frame = new JFrame("Chat : " + this.name);
 	        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE );//EXIT_ON_CLOSE
+	        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+	            @Override
+	            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+	                if (JOptionPane.showConfirmDialog(frame, 
+	                    "Are you sure to close this window?", "Really Closing?", 
+	                    JOptionPane.YES_NO_OPTION,
+	                    JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+	                    //System.exit(0);
+	                	Test.chats.remove(name);
+	                	frame.dispose();
+	                	currentThread().interrupt();
+	                }
+	                
+	            }
+	        });
 	 
 	        //Set up the content pane.
 	        addComponentsToPane(frame.getContentPane());

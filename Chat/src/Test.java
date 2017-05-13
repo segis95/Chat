@@ -163,7 +163,15 @@ public class Test {
 				
 				int i,j,k;
 				i = msg.indexOf("#", 2);
-				client.connection_to(msg.substring(2, i));
+				String s = msg.substring(2, i);
+				client.connection_to(s);
+				if (!chats.containsKey(s)){
+					Chat ch = new Chat(s);
+					chats.put(s, ch);
+					ch.setDaemon(true);
+					ch.run();
+				}
+				
 			}
 			
 			if (msg.charAt(0) == 'c'){
@@ -172,6 +180,7 @@ public class Test {
 				if (!chats.containsKey(s)){
 					Chat ch = new Chat(s);
 					chats.put(s, ch);
+					ch.setDaemon(true);
 				}
 				
 			}
